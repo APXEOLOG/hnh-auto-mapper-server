@@ -10,9 +10,8 @@
  - Optimal stability (worked nearly the whole W11 (a year) with only few reboots)
 
 Some examples:
-Live mode
 
-![Live mode](https://webm.red/view/FrOT.webm)
+[Live mode](https://webm.red/view/FrOT.webm)
 
 Geolocation
 
