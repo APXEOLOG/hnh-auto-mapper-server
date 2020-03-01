@@ -12,6 +12,9 @@
 
 Some examples:
 
+[Random W11 map part](https://i.imgur.com/799FNEp.png)
+
+
 [Live mode](https://webm.red/view/FrOT.webm)
 
 Geolocation
