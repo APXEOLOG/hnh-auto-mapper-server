@@ -1,0 +1,6 @@
+management.metrics.export.humio.apiToken= <Ingest API Token for https://www.humio.com/>
+management.metrics.export.humio.tags.type= <Additional Humio tag>
+
+map.user.login= <Frontend login>
+map.user.password= <Frontend password>
+map.admin.token= <API Admin token>

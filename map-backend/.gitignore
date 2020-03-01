@@ -1,0 +1,7 @@
+.gradle
+.idea
+build
+out
+public
+mapdata.db
+application.properties
