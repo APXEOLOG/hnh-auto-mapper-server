@@ -72,4 +72,7 @@ This should be it. Now try to access your instance on port 80 and you should see
 
 ### Client integration
 
-Sample PR against Amber client will be coming soon with all required integration code
+You can check sample integration against Amber Client here: https://github.com/APXEOLOG/amber/pull/1
+
+All client code is around 1k lines, concentrated into a separate files with few integration points (~20 invocations across client codebase)
+Should easily integrated into any custom client
