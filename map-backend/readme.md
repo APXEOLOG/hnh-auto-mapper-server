@@ -42,3 +42,18 @@ management.metrics.export.humio.tags.type=XXX
 ```
 
 You can remove this two lines from config if you don't want to use Humio
+
+### Using Admin API to manage map
+
+#### Cleanup all data from the map
+`GET <map_endpoint>/api/v1/cleanup?token=<admin_token>`
+
+#### Set zero grid (0; 0), which will be used as a starting point to accept new minimaps
+This is required to get map working. You need to define (0; 0) grid so it will be able to accept minimaps from sessions which can be connected to the (0; 0)
+
+`GET <map_endpoint>/api/v1/setZeroGrid?gridId=<grid_id>&token=<admin_token>`
+
+#### Set zero grid (0; 0), which will be used as a starting point to accept new minimaps
+Sometimes you can receive bad minimap (for example cave instead of surface). You can remove it using this api call
+
+`GET <map_endpoint>/api/v1/removeGrid?x=<map_grid_x>&y=<map_grid_y>&token=<admin_token>`

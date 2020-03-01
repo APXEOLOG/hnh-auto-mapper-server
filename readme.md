@@ -21,6 +21,17 @@ Geolocation
 
 ![Geolocation](https://i.imgur.com/gtbNjre.png)
 
+
+### Limitations
+
+This map is centered around certain point and can receive new minimaps only when client can determine offset
+The typical use-case for this map is:
+ - At the start of the world your group find a spawn point
+ - You define this point as (0; 0) for the map using Admin API (check backend readme for more info)
+ - Everyone restart clients :)
+ - Now map will receive minimaps and they immediately will be seen in the Web UI
+ 
+
 ### Configuration and build
 
 Detailed configuration options can be found inside backend/frontend folders
