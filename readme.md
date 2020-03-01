@@ -8,6 +8,7 @@
  - Good performance (easily handled ~40 clients sending updates at the same time at the W11 start)
  - Cheap maintenance (or even free - can be run inside free-tier t2.micro aws instance)
  - Optimal stability (worked nearly the whole W11 (a year) with only few reboots)
+ - No more manual merges and updates!
 
 Some examples:
 
@@ -65,3 +66,7 @@ Installation process (for Ubuntu 18.x)
 8. Move into `~/hnh-map/` folder and run `./install.sh`. Script should update nginx conf and systemd service
 
 This should be it. Now try to access your instance on port 80 and you should see frontend application
+
+### Client integration
+
+Sample PR against Amber client will be coming soon with all required integration code
