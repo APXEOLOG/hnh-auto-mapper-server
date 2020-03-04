@@ -169,6 +169,7 @@ class MapService(meterRegistry: MeterRegistry) {
         updateGridIdsFile()
         if (mapdataFolder.deleteRecursively()) {
             mapdataFolder.mkdirs()
+            unscaledGrids.mkdirs()
         }
     }
 
