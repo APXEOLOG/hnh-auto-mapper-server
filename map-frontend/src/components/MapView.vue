@@ -31,10 +31,10 @@
     import {ModelSelect} from 'vue-search-select'
     import {CustomGridLayer, HnHCRS, HnHMaxZoom, HnHMinZoom, TileSize} from "../utils/LeafletCustomTypes";
     import * as L from "leaflet";
-    import {API_ENDPOINT} from "../main";
     import {Marker} from "../data/Marker";
     import {UniqueList} from "../data/UniqueList";
     import {Character} from "../data/Character";
+
 
     export default {
         name: "MapView",
@@ -80,7 +80,7 @@
             }
         },
         mounted() {
-            this.$http.get(`${API_ENDPOINT}/v1/characters`).then(response => {
+            this.$http.get(`${this.$store.getters.API_ENDPOINT}/v1/characters`).then(response => {
                 this.setupMap(response.body);
             }, () => this.$emit("error"));
         },
@@ -142,7 +142,7 @@
                 }
 
                 this.intervalId = setInterval(() => {
-                    this.$http.get(`${API_ENDPOINT}/v1/characters`).then(response => {
+                    this.$http.get(`${this.$store.getters.API_ENDPOINT}/v1/characters`).then(response => {
                         this.updateCharacters(response.body);
                     }, () => {
                         clearInterval(this.intervalId);
@@ -150,7 +150,7 @@
                     });
                 }, 2000);
                 // Request markers
-                this.$http.get(`${API_ENDPOINT}/v1/markers`).then(response => {
+                this.$http.get(`${this.$store.getters.API_ENDPOINT}/v1/markers`).then(response => {
                     this.updateMarkers(response.body);
                 }, () => {
                     this.$emit("error")

@@ -1,0 +1,64 @@
+version: '2'
+services:
+  api:
+    build: map-backend
+    networks:
+      - 'web'
+    restart: always
+    volumes:
+      - "mapdatabase:/hnh/database"
+      - "mappublic:/hnh/public"
+    environment:
+      - HUMIO_TOKEN="fNNuB8ITyHEdLvyrcgl2cFF1SfnkYX7O5UfS73KOhjXc"
+      - MAP_USER=kaczuszka123
+      - MAP_PASSWORD=kaczuszka1234
+      - MAP_ADMIN_TOKEN=abcdefg
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.mapapi.rule=(Host(`frontend.docker.localhost`) && PathPrefix(`/api`))"
+      - "traefik.http.routers.mapapi.priority=30"
+      - "traefik.http.routers.mapapi.entrypoints=websecure,web"
+      - "traefik.http.services.mapapi.loadbalancer.server.port=5000"
+  frontend:
+    build: map-frontend
+    networks:
+      - 'web'
+    volumes:
+      - "mappublic:/usr/share/nginx/mountpoint"
+    restart: always
+    environment:
+      - ENDPOINT_URL=http://frontend.docker.localhost
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.mapfront.rule=HostRegexp(`frontend.docker.localhost`, `frontend.docker.localhost/*`)"
+      - "traefik.http.routers.mapfront.priority=20"
+      - "traefik.http.routers.mapfront.entrypoints=websecure,web"
+
+  traefik:
+    image: traefik:v2.1
+    restart: always
+    networks:
+      - 'web'
+    ports:
+      - 443:443
+      - 80:80
+    command: 
+      - --providers.docker
+      - --providers.docker.exposedbydefault=false
+      - --entryPoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      - --providers.docker.endpoint=unix:///var/run/docker.sock
+
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock:ro' 
+      - 'acmestorage:/letsencrypt'  
+
+volumes:
+  mapdatabase:
+  mappublic:
+  acmestorage:
+
+networks:
+  web:
+    #if set to true you need to create network 'web' yourself (docker network create web). This allow you to attach more services to traefik
+    external: false
