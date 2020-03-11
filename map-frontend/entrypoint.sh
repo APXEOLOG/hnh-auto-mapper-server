@@ -7,4 +7,4 @@ cat <<EOF > /usr/share/nginx/html/config.json
 }
 EOF
 
-nginx -g daemon off;
+nginx -g "daemon off;"
