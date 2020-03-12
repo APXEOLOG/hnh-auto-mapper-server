@@ -32,7 +32,7 @@ The typical use-case for this map is:
  - Now map will receive minimaps and they immediately will be seen in the Web UI
  
 
-### Configuration and build
+### Configuration and build systemd
 
 Detailed configuration options can be found inside backend/frontend folders
 
@@ -80,6 +80,35 @@ Installation process (for Ubuntu 18.x)
 8. Move into `~/hnh-map/` folder and run `./install.sh`. Script should update nginx conf and systemd service
 
 This should be it. Now try to access your instance on port 80 and you should see frontend application
+
+
+### docker deployment
+
+There is a docker-compose file with everything builded && included.
+
+It also supports let's encrypt to ensure secure connection (https).
+
+You will need docker:
+
+```
+curl https://get.docker.com | bash
+```
+
+And docker-compose
+```
+curl -L https://github.com/docker/compose/releases/download/1.25.4/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+chmod +x /usr/local/bin/docker-compose
+```
+
+
+Fill .env file and make docker-compose up -d
+
+Amazon ec2 instance doesn't support let's encrypt on it's base dns name, you will need other domain (like .tk), or use http.
+
+```
+docker-compose up -d
+```
+
 
 ### Client integration
 
