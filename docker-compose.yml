@@ -1,4 +1,4 @@
-version: '2'
+version: '3'
 services:
   api:
     build: map-backend
@@ -10,15 +10,17 @@ services:
       - "mappublic:/hnh/public"
     environment:
       - HUMIO_TOKEN="fNNuB8ITyHEdLvyrcgl2cFF1SfnkYX7O5UfS73KOhjXc"
-      - MAP_USER=kaczuszka123
-      - MAP_PASSWORD=kaczuszka1234
-      - MAP_ADMIN_TOKEN=abcdefg
+      - MAP_USER=${MAP_USER}
+      - MAP_PASSWORD=${MAP_PASSWORD}
+      - MAP_ADMIN_TOKEN=${MAP_ADMIN_TOKEN}
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.mapapi.rule=(Host(`frontend.docker.localhost`) && PathPrefix(`/api`))"
+      - "traefik.http.routers.mapapi.rule=(Host(`${DOMAIN}`) && PathPrefix(`/api`))"
       - "traefik.http.routers.mapapi.priority=30"
       - "traefik.http.routers.mapapi.entrypoints=websecure,web"
       - "traefik.http.services.mapapi.loadbalancer.server.port=5000"
+      - "traefik.http.routers.mapapi.tls.domains[0].main=${DOMAIN}"
+      - "traefik.http.routers.mapapi.tls.certResolver=myresolver"
   frontend:
     build: map-frontend
     networks:
@@ -27,12 +29,14 @@ services:
       - "mappublic:/usr/share/nginx/mountpoint"
     restart: always
     environment:
-      - ENDPOINT_URL=http://frontend.docker.localhost
+      - ENDPOINT_URL=https://${DOMAIN}
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.mapfront.rule=HostRegexp(`frontend.docker.localhost`, `frontend.docker.localhost/*`)"
+      - "traefik.http.routers.mapfront.rule=HostRegexp(`${DOMAIN}`, `${DOMAIN}/*`)"
       - "traefik.http.routers.mapfront.priority=20"
       - "traefik.http.routers.mapfront.entrypoints=websecure,web"
+      - "traefik.http.routers.mapfront.tls.domains[0].main=${DOMAIN}"
+      - "traefik.http.routers.mapfront.tls.certResolver=myresolver"
 
   traefik:
     image: traefik:v2.1
@@ -48,6 +52,9 @@ services:
       - --entryPoints.web.address=:80
       - --entrypoints.websecure.address=:443
       - --providers.docker.endpoint=unix:///var/run/docker.sock
+      - --certificatesResolvers.myresolver.acme.storage=/letsencrypt/acme.json
+      - --certificatesResolvers.myresolver.acme.httpChallenge.entryPoint=web
+      - --certificatesResolvers.myresolver.acme.email=${EMAIL}
 
     volumes:
       - '/var/run/docker.sock:/var/run/docker.sock:ro' 
