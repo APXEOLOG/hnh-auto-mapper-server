@@ -15,12 +15,17 @@ services:
       - MAP_ADMIN_TOKEN=${MAP_ADMIN_TOKEN}
     labels:
       - "traefik.enable=true"
+      - "traefik.http.routers.mapapitls.rule=(Host(`${DOMAIN}`) && PathPrefix(`/api`))"
+      - "traefik.http.routers.mapapitls.priority=30"
+      - "traefik.http.routers.mapapitls.tls.domains[0].main=${DOMAIN}"
+      - "traefik.http.routers.mapapitls.tls.certResolver=myresolver"
+      - "traefik.http.routers.mapapitls.entrypoints=websecure"
+      - "traefik.http.routers.mapapitls.service=mapapiservice"
       - "traefik.http.routers.mapapi.rule=(Host(`${DOMAIN}`) && PathPrefix(`/api`))"
       - "traefik.http.routers.mapapi.priority=30"
-      - "traefik.http.routers.mapapi.entrypoints=websecure,web"
-      - "traefik.http.services.mapapi.loadbalancer.server.port=5000"
-      - "traefik.http.routers.mapapi.tls.domains[0].main=${DOMAIN}"
-      - "traefik.http.routers.mapapi.tls.certResolver=myresolver"
+      - "traefik.http.routers.mapapi.entrypoints=web"
+      - "traefik.http.routers.mapapi.service=mapapiservice"
+      - "traefik.http.services.mapapiservice.loadbalancer.server.port=5000"
   frontend:
     build: map-frontend
     networks:
@@ -29,14 +34,20 @@ services:
       - "mappublic:/usr/share/nginx/mountpoint"
     restart: always
     environment:
-      - ENDPOINT_URL=https://${DOMAIN}
+      - ENDPOINT_URL=${ENTRYPOINT}
     labels:
       - "traefik.enable=true"
+      - "traefik.http.routers.mapfronttls.rule=HostRegexp(`${DOMAIN}`, `${DOMAIN}/*`)"
+      - "traefik.http.routers.mapfronttls.priority=20"
+      - "traefik.http.routers.mapfronttls.tls.domains[0].main=${DOMAIN}"
+      - "traefik.http.routers.mapfronttls.tls.certResolver=myresolver"
+      - "traefik.http.routers.mapfronttls.entrypoints=websecure"
+      - "traefik.http.routers.mapfronttls.service=mapfrontservice"
       - "traefik.http.routers.mapfront.rule=HostRegexp(`${DOMAIN}`, `${DOMAIN}/*`)"
       - "traefik.http.routers.mapfront.priority=20"
-      - "traefik.http.routers.mapfront.entrypoints=websecure,web"
-      - "traefik.http.routers.mapfront.tls.domains[0].main=${DOMAIN}"
-      - "traefik.http.routers.mapfront.tls.certResolver=myresolver"
+      - "traefik.http.routers.mapfront.entrypoints=web"
+      - "traefik.http.routers.mapfront.service=mapfrontservice"
+      - "traefik.http.services.mapfrontservice.loadbalancer.server.port=80"
 
   traefik:
     image: traefik:v2.1
