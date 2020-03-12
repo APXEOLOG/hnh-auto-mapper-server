@@ -1,7 +1,7 @@
 version: '3'
 services:
   api:
-    build: map-backend
+    image: razikus/hnh-auto-mapper-server:backend-master
     networks:
       - 'web'
     restart: always
@@ -27,7 +27,7 @@ services:
       - "traefik.http.routers.mapapi.service=mapapiservice"
       - "traefik.http.services.mapapiservice.loadbalancer.server.port=5000"
   frontend:
-    build: map-frontend
+    image: razikus/hnh-auto-mapper-server:frontend-master
     networks:
       - 'web'
     volumes:
