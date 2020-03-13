@@ -1,0 +1,82 @@
+version: '3'
+services:
+  api:
+    image: razikus/hnh-auto-mapper-server:backend-master
+    networks:
+      - 'web'
+    restart: always
+    volumes:
+      - "mapdatabase:/hnh/database"
+      - "mappublic:/hnh/public"
+    environment:
+      - HUMIO_TOKEN=${HUMIO_TOKEN}
+      - MAP_USER=${MAP_USER}
+      - MAP_PASSWORD=${MAP_PASSWORD}
+      - MAP_ADMIN_TOKEN=${MAP_ADMIN_TOKEN}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.mapapitls.rule=(Host(`${DOMAIN}`) && PathPrefix(`/api`))"
+      - "traefik.http.routers.mapapitls.priority=30"
+      - "traefik.http.routers.mapapitls.tls.domains[0].main=${DOMAIN}"
+      - "traefik.http.routers.mapapitls.tls.certResolver=myresolver"
+      - "traefik.http.routers.mapapitls.entrypoints=websecure"
+      - "traefik.http.routers.mapapitls.service=mapapiservice"
+      - "traefik.http.routers.mapapi.rule=(Host(`${DOMAIN}`) && PathPrefix(`/api`))"
+      - "traefik.http.routers.mapapi.priority=30"
+      - "traefik.http.routers.mapapi.entrypoints=web"
+      - "traefik.http.routers.mapapi.service=mapapiservice"
+      - "traefik.http.services.mapapiservice.loadbalancer.server.port=5000"
+  frontend:
+    image: razikus/hnh-auto-mapper-server:frontend-master
+    networks:
+      - 'web'
+    volumes:
+      - "mappublic:/usr/share/nginx/mountpoint"
+    restart: always
+    environment:
+      - ENDPOINT_URL=${ENTRYPOINT}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.mapfronttls.rule=HostRegexp(`${DOMAIN}`, `${DOMAIN}/*`)"
+      - "traefik.http.routers.mapfronttls.priority=20"
+      - "traefik.http.routers.mapfronttls.tls.domains[0].main=${DOMAIN}"
+      - "traefik.http.routers.mapfronttls.tls.certResolver=myresolver"
+      - "traefik.http.routers.mapfronttls.entrypoints=websecure"
+      - "traefik.http.routers.mapfronttls.service=mapfrontservice"
+      - "traefik.http.routers.mapfront.rule=HostRegexp(`${DOMAIN}`, `${DOMAIN}/*`)"
+      - "traefik.http.routers.mapfront.priority=20"
+      - "traefik.http.routers.mapfront.entrypoints=web"
+      - "traefik.http.routers.mapfront.service=mapfrontservice"
+      - "traefik.http.services.mapfrontservice.loadbalancer.server.port=80"
+
+  traefik:
+    image: traefik:v2.1
+    restart: always
+    networks:
+      - 'web'
+    ports:
+      - 443:443
+      - 80:80
+    command: 
+      - --providers.docker
+      - --providers.docker.exposedbydefault=false
+      - --entryPoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      - --providers.docker.endpoint=unix:///var/run/docker.sock
+      - --certificatesResolvers.myresolver.acme.storage=/letsencrypt/acme.json
+      - --certificatesResolvers.myresolver.acme.httpChallenge.entryPoint=web
+      - --certificatesResolvers.myresolver.acme.email=${EMAIL}
+
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock:ro' 
+      - 'acmestorage:/letsencrypt'  
+
+volumes:
+  mapdatabase:
+  mappublic:
+  acmestorage:
+
+networks:
+  web:
+    #if set to true you need to create network 'web' yourself (docker network create web). This allow you to attach more services to traefik
+    external: false

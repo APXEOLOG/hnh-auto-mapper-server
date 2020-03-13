@@ -19,19 +19,24 @@ cd ../
 cp map-backend/build/libs/map-backend.jar hnh-map/map-backend.jar
 
 # Change frontend config.js
-cat <<EOF > map-frontend/src/config.js
-export const MAP_ENDPOINT = '$ENDPOINT_URL';
+cat <<EOF > map-frontend/public/config.json
+{
+    "MAP_ENDPOINT": "$ENDPOINT_URL"
+}
 EOF
 
 ## Build frontend
 cd map-frontend
-npm isntall
+npm install
 npm run build
 cd ../
 
 # Copy output
 mkdir hnh-map/public
 cp -r map-frontend/dist/* hnh-map/public
+
+# Create catalogue to store database
+mkdir hnh-map/database
 
 # Create backend configuration file
 cat <<EOF > hnh-map/application.properties

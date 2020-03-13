@@ -1,5 +1,5 @@
 import L, {Bounds, LatLng, Point} from "leaflet"
-import {getTileUrl} from "../main";
+import { store } from "../store/index";
 
 export const TileSize = 100;
 export const HnHMaxZoom = 6;
@@ -34,7 +34,7 @@ export const CustomGridLayer = L.GridLayer.extend({
         asyncImage.onerror = () => {
             imageElement.classList.add("load-error");
         };
-        asyncImage.src = getTileUrl(topLeft.x, topLeft.y, coords.z);
+        asyncImage.src = store.getters.getTileUrl(topLeft.x, topLeft.y, coords.z);
 
         let text = `(${topLeft.x};${topLeft.y})`;
         if (scaleFactor !== 1) {

@@ -155,7 +155,7 @@ fun getNextZoomToGenerate(zoomLevel: Int) : Coordinate? {
 }
 
 fun setupDatabaseConnection() {
-    Database.connect("jdbc:sqlite:mapdata.db", driver = "org.sqlite.JDBC")
+    Database.connect("jdbc:sqlite:database/mapdata.db", driver = "org.sqlite.JDBC")
     TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
     TransactionManager.manager.defaultRepetitionAttempts = 0
     transaction {
